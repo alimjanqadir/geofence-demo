@@ -251,9 +251,9 @@ public class GeofenceRepository {
         try {
             // Build a Mapbox geocoding request
             MapboxGeocoding client = MapboxGeocoding.builder()
-                    .accessToken(mContext.getString(R.string.mapbox_access_token))
-                    .query(com.mapbox.geojson.Point.fromLngLat(point.getLatitude(), point.getLongitude()))
-                    .geocodingTypes(GeocodingCriteria.TYPE_POI)
+                    .accessToken("pk.eyJ1IjoiYWxpbWphbnFhZGlyIiwiYSI6ImNqb282bndmcTAwNXcza3FzOHFhaHF2cHcifQ.Ne-sCqa9Z6cbJTHOyZhBxA")
+                    .query(com.mapbox.geojson.Point.fromLngLat(point.getLongitude(), point.getLatitude()))
+                    .geocodingTypes(GeocodingCriteria.TYPE_POI_LANDMARK)
                     .mode(GeocodingCriteria.MODE_PLACES)
                     .build();
 
@@ -268,7 +268,7 @@ public class GeofenceRepository {
                             // Get the first Feature from the successful geocoding response
                             CarmenFeature feature = results.get(0);
                             Place place = new Place();
-                            place.setAddress(feature.toString());
+                            place.setAddress(feature.text());
                             place.setPoint(point);
                             mPlace.postValue(place);
                         } else {

@@ -389,11 +389,13 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
      */
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
-        // show remove snackbar
-        Geofence geofence = new Geofence();
-        geofence.setLatitude(marker.getPosition().getLatitude());
-        geofence.setLongitude(marker.getPosition().getLongitude());
-        showRemoveGeofenceSnackBar(geofence);
+        if (mUserClickMarker != null && mUserClickMarker != marker) {
+            // show remove snackbar
+            Geofence geofence = new Geofence();
+            geofence.setLatitude(marker.getPosition().getLatitude());
+            geofence.setLongitude(marker.getPosition().getLongitude());
+            showRemoveGeofenceSnackBar(geofence);
+        }
 
         return false;
     }
