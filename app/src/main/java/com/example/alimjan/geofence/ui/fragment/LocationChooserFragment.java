@@ -19,6 +19,8 @@ import com.example.alimjan.geofence.ui.viewmodel.LocationChooserViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.annotations.Polygon;
+import com.mapbox.mapboxsdk.annotations.PolygonOptions;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
@@ -53,6 +55,7 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
     private Marker mUserClickMarker;
     // ViewModel instance that includes UI related data.
     private LocationChooserViewModel mViewModel;
+    private Polygon mUserClickPointRadius;
 
     public LocationChooserFragment() {
         // Required empty public constructor
@@ -144,8 +147,10 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
             clearMarkers();
 
             this.addGeofenceMarkers(geofences);
+            this.addGeofenceRadiusPolygons(geofences);
         });
     }
+
 
     /**
      * Clear all the markers on the map including user click marker.
@@ -153,6 +158,7 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
     private void clearMarkers() {
         this.mMap.clear();
         this.mUserClickMarker = null;
+        this.mUserClickPointRadius = null;
     }
 
 
@@ -209,6 +215,23 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
     }
 
     /**
+     * Add geofence radius on the map.
+     *
+     * @param geofences A list of geofences that marked on the map.
+     */
+    private void addGeofenceRadiusPolygons(List<Geofence> geofences) {
+        List<PolygonOptions> polygonOptionsList = new ArrayList<>();
+        for (Geofence geofence : geofences) {
+            PolygonOptions polygonOptions = new PolygonOptions();
+            polygonOptions.addAll(polygonCircleForPoint(new LatLng(geofence.getLatitude(), geofence.getLongitude()), 200));
+            polygonOptions.fillColor(getResources().getColor(R.color.color_fence));
+            polygonOptions.strokeColor(getResources().getColor(R.color.colorPrimaryDark));
+            polygonOptionsList.add(polygonOptions);
+        }
+        this.mMap.addPolygons(polygonOptionsList);
+    }
+
+    /**
      * Shows a snackbar for adding geofence.
      *
      * @param place Used for showing address and {@link Snackbar#setAction}.
@@ -218,7 +241,6 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
         Snackbar snackbar = Snackbar.make(this.mMapView, message, Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.button_confirm, view -> addGeofence(place)).show();
     }
-
 
     /**
      * Add a geofence for reminding user when they enter and exit specific area.
@@ -312,7 +334,7 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
         this.mMap.getUiSettings().setCompassEnabled(true);
         this.mMap.getUiSettings().setCompassFadeFacingNorth(false);
 
-        // TODO used only for emulator testing can be customized later
+        // TODO used only for emulator testing customized later
         //noinspection deprecation
         this.mMap.getUiSettings().setZoomControlsEnabled(true);
     }
@@ -340,10 +362,22 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
      * @param point The projected map coordinate the user clicked on.
      */
     private void positionGeofenceIndicator(@NonNull LatLng point) {
-        if (this.mUserClickMarker != null) {
+        // Show user click marker
+        if (this.mUserClickMarker != null && this.mUserClickPointRadius != null) {
             this.mUserClickMarker.setPosition(point);
         } else {
-            this.mUserClickMarker = mMap.addMarker(new MarkerOptions().position(point));
+            this.mUserClickMarker = this.mMap.addMarker(new MarkerOptions().position(point));
+        }
+
+        // Show circle
+        if (this.mUserClickPointRadius != null) {
+            this.mUserClickPointRadius.setPoints(polygonCircleForPoint(point, 200));
+        } else {
+            PolygonOptions polygonOptions = new PolygonOptions();
+            polygonOptions.addAll(polygonCircleForPoint(point, 200));
+            polygonOptions.fillColor(getResources().getColor(R.color.colorPrimary));
+            polygonOptions.strokeColor(getResources().getColor(R.color.colorPrimaryDark));
+            this.mUserClickPointRadius = this.mMap.addPolygon(polygonOptions);
         }
     }
 
@@ -362,6 +396,34 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
         showRemoveGeofenceSnackBar(geofence);
 
         return false;
+    }
+
+    /**
+     * Create a polygon circle points to certain position on map with radius.
+     *
+     * @param position A position on map.
+     * @param radius   Radius in meters.
+     * @return A list of points represents a circle.
+     */
+    private ArrayList<LatLng> polygonCircleForPoint(LatLng position, double radius) {
+        int degreesBetweenPoints = 8; //45 sides
+        int numberOfPoints = (int) Math.floor(360 / degreesBetweenPoints);
+        double distRadians = radius / 6371000.0; // earth radius in meters
+        double centerLatRadians = position.getLatitude() * Math.PI / 180;
+        double centerLonRadians = position.getLongitude() * Math.PI / 180;
+        ArrayList<LatLng> polygons = new ArrayList<>(); //array to hold all the points
+        for (int index = 0; index < numberOfPoints; index++) {
+            double degrees = index * degreesBetweenPoints;
+            double degreeRadians = degrees * Math.PI / 180;
+            double pointLatRadians = Math.asin(Math.sin(centerLatRadians) * Math.cos(distRadians) + Math.cos(centerLatRadians) * Math.sin(distRadians) * Math.cos(degreeRadians));
+            double pointLonRadians = centerLonRadians + Math.atan2(Math.sin(degreeRadians) * Math.sin(distRadians) * Math.cos(centerLatRadians),
+                    Math.cos(distRadians) - Math.sin(centerLatRadians) * Math.sin(pointLatRadians));
+            double pointLat = pointLatRadians * 180 / Math.PI;
+            double pointLon = pointLonRadians * 180 / Math.PI;
+            LatLng point = new LatLng(pointLat, pointLon);
+            polygons.add(point);
+        }
+        return polygons;
     }
 
 
