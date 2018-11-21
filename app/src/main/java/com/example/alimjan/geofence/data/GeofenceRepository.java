@@ -253,7 +253,7 @@ public class GeofenceRepository {
             MapboxGeocoding client = MapboxGeocoding.builder()
                     .accessToken("pk.eyJ1IjoiYWxpbWphbnFhZGlyIiwiYSI6ImNqb282bndmcTAwNXcza3FzOHFhaHF2cHcifQ.Ne-sCqa9Z6cbJTHOyZhBxA")
                     .query(com.mapbox.geojson.Point.fromLngLat(point.getLongitude(), point.getLatitude()))
-                    .geocodingTypes(GeocodingCriteria.TYPE_POI_LANDMARK)
+                    .geocodingTypes(GeocodingCriteria.TYPE_POI)
                     .mode(GeocodingCriteria.MODE_PLACES)
                     .build();
 
@@ -268,7 +268,7 @@ public class GeofenceRepository {
                             // Get the first Feature from the successful geocoding response
                             CarmenFeature feature = results.get(0);
                             Place place = new Place();
-                            place.setAddress(feature.text());
+                            place.setAddress(feature.placeName());
                             place.setPoint(point);
                             mPlace.postValue(place);
                         } else {
