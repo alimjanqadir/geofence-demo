@@ -60,8 +60,8 @@ App is tested on 5 virtual device with API levels from 22 to 28, latency is in s
 in the foreground and 5min to 10min while in the background. This result is almost same when I test
 with physical device (XiaoMi Android Version 8.0).
 
-![test-image-01](/images/test-image-01.png)
-![test-image-02](/images/test-image-02.png)
+![test-image-01](/images/test-image-01.png | width=250)
+![test-image-02](/images/test-image-02.png | width=250)
 
 ### Build
 
