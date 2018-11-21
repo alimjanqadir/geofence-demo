@@ -51,11 +51,11 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
     private Activity mContext;
     private MapView mMapView;
     private MapboxMap mMap;
-    // Marker specifically indicates user clicked position.
+    // Marker and geofence radius specifically indicates user clicked position.
     private Marker mUserClickMarker;
+    private Polygon mUserClickPointRadius;
     // ViewModel instance that includes UI related data.
     private LocationChooserViewModel mViewModel;
-    private Polygon mUserClickPointRadius;
 
     public LocationChooserFragment() {
         // Required empty public constructor
@@ -143,12 +143,8 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
         });
 
         // Add geofence markers on the map
-        this.mViewModel.getGeofences().observe(this, geofences -> {
-            clearMarkers();
-
-            this.addGeofenceMarkers(geofences);
-            this.addGeofenceRadiusPolygons(geofences);
-        });
+        // refresh geofences
+        this.mViewModel.getGeofences().observe(this, this::refreshGeofences);
     }
 
 
@@ -197,6 +193,25 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
         // Sync activity lifecycle to map lifecycle
         mMapView.onDestroy();
 
+    }
+
+    /**
+     * Refresh all geofence indicator on th map.
+     *
+     * @param geofences A List of geofence instance.
+     */
+    private void refreshGeofences(List<Geofence> geofences) {
+        clearMarkers();
+
+        this.addGeofenceMarkers(geofences);
+        this.addGeofenceRadiusPolygons(geofences);
+
+        // Redraw user selected position as well.
+        Point selectedPoint = this.mViewModel.getSelectedPoint();
+        // Selected point can be null before user selection
+        if (selectedPoint != null) {
+            positionGeofenceIndicator(new LatLng(selectedPoint.getLatitude(), selectedPoint.getLongitude()));
+        }
     }
 
     /**
@@ -357,7 +372,7 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
         positionGeofenceIndicator(point);
 
         // Change the user selected position.
-        this.mViewModel.setSelectedPosition(new Point(point.getLatitude(), point.getLongitude()));
+        this.mViewModel.setSelectedPoint(new Point(point.getLatitude(), point.getLongitude()));
 
         Timber.d("onMapClick: La: %f Lo: %f", point.getLatitude(), point.getLongitude());
     }
@@ -395,6 +410,7 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
      */
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
+        // Should show remove geofence snack bar when clicked marker is temporary user click.
         if (mUserClickMarker != null && mUserClickMarker != marker) {
             // show remove snackbar
             Geofence geofence = new Geofence();
@@ -413,6 +429,7 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
      * @param radius   Radius in meters.
      * @return A list of points represents a circle.
      */
+    @SuppressWarnings("SameParameterValue")
     private ArrayList<LatLng> polygonCircleForPoint(LatLng position, double radius) {
         int degreesBetweenPoints = 8; //45 sides
         int numberOfPoints = (int) Math.floor(360 / degreesBetweenPoints);

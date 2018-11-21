@@ -56,8 +56,15 @@ public class LocationChooserViewModel extends AndroidViewModel {
      *
      * @param point User selected point on the map.
      */
-    public void setSelectedPosition(Point point) {
+    public void setSelectedPoint(Point point) {
         this.mSelectedPoint.setValue(point);
+    }
+
+    /**
+     * Return currently selected point on the map.
+     */
+    public Point getSelectedPoint() {
+        return mSelectedPoint.getValue();
     }
 
     /**
