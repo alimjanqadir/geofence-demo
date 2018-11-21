@@ -251,7 +251,7 @@ public class GeofenceRepository {
         try {
             // Build a Mapbox geocoding request
             MapboxGeocoding client = MapboxGeocoding.builder()
-                    .accessToken("pk.eyJ1IjoiYWxpbWphbnFhZGlyIiwiYSI6ImNqb282bndmcTAwNXcza3FzOHFhaHF2cHcifQ.Ne-sCqa9Z6cbJTHOyZhBxA")
+                    .accessToken(this.mContext.getString(R.string.mapbox_access_token))
                     .query(com.mapbox.geojson.Point.fromLngLat(point.getLongitude(), point.getLatitude()))
                     .geocodingTypes(GeocodingCriteria.TYPE_POI)
                     .mode(GeocodingCriteria.MODE_PLACES)
@@ -268,7 +268,13 @@ public class GeofenceRepository {
                             // Get the first Feature from the successful geocoding response
                             CarmenFeature feature = results.get(0);
                             Place place = new Place();
-                            place.setAddress(feature.placeName());
+                            String placeName = feature.placeName();
+                            // Show coordinate while there is no place name.
+                            if (placeName != null) {
+                                place.setAddress(placeName);
+                            } else {
+                                place.setAddress(String.format(mContext.getString(R.string.address_in_coordinates_format), point.getLatitude(), point.getLongitude()));
+                            }
                             place.setPoint(point);
                             mPlace.postValue(place);
                         } else {
@@ -287,7 +293,6 @@ public class GeofenceRepository {
             });
         } catch (ServicesException servicesException) {
             Timber.e("Error geocoding: %s", servicesException.toString());
-            servicesException.printStackTrace();
         }
 
         return this.mPlace;
