@@ -43,7 +43,7 @@ At first my design scheme is to maintain a list of areas with minimum radius of 
 and check them with 5 minutes latency using WorkManager. But implementing, testing and running correctly 
 seemed hard to accomplish in two days. After reading the LocationManager document I realize it has
 offered addProximityAlert method to create geofence alert, so I achieve this scenario 
-using LocationManger#addProximityAlert api. Latency of the api is 5s to 10m and system uses it's
+using `LocationManger#addProximityAlert` API. Latency of the API is 5s to 10m and system uses it's
 location service to optimize battery life and I checked the running services of the os in Xiaomi 10
 it uses in-house FusionLocationProvider(which utilizes all kind of location providers) to fix location.
 
