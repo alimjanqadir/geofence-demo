@@ -16,17 +16,6 @@ contained action related code and UI and data layer separated clearly.
 
 ![app architecture](https://developer.android.com/topic/libraries/architecture/images/final-architecture.png)
 
-
-## Business scenario
-Requirement is to make geofence alert feature that notifies the user whenever he/she enters and exits
-a specified region and using Google Location API is not allowed.
-
-## Design choices
-In order to leverage accuracy, latency and power, I set minimum geofence radius to 200 meters because
-this is an average accuracy of cellular positioning which is cheaper than GPS positioning. For latency 
-I didn't setup location querying or checking interval, system automatically handle checks by itself if
-according to position query on system.
-
 ## Project Structure
 
 Project consists of 5 main packages :
@@ -35,6 +24,20 @@ Project consists of 5 main packages :
 * db (include Room database class, dao and a helper class)
 * model (include a model classes that key part of the application)
 * ui (includes all ui related classes activities, fragments, other UI-related stuff.)
+
+
+## Business scenario
+Requirement is to make geofence alert feature that notifies the user whenever he/she enters and exits
+a specified region and using Google Location API is not allowed.
+
+## Design choices
+At first my design scheme is to maintain a list of areas with minimum radius of 200 meters
+and check them with 5 minutes latency using WorkManager. Implementing, testing and running correctly 
+is seemed hard to accomplish in two days. After reading the LocationManager document I 
+realize it has offered addProximityAlert method to create geofence alert, So I achieve this scenario 
+using LocationManger#addProximityAlert api. Latency of the api is 5s to 10m and system uses it's
+location service to optimize battery life and I checked the running services of the os in Xiaomi 10
+it uses in-house FusionLocationProvider(which utilizes all kind of location providers) to fix location.
 
 
 ### Build
