@@ -1,0 +1,20 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" tools:ignore="PrivateResource">Geofence Demo</string>
+    <string name="channel_name">Geofence Notification</string>
+    <string name="channel_description">For geofence notification.</string>
+    <string name="title_geofence_enter">Geofence enter alert</string>
+    <string name="title_geofence_exit">Geofence exit alert</string>
+    <string name="dialog_title_ask_for_permission">Ask for permission</string>
+    <string name="message_geofence_enter_format">Your entered to %s.</string>
+    <string name="message_geofence_exit_format">You exit from %s.</string>
+    <string name="warning_request_permission_rationale">The app you are using is location based, if you don\'t let the app acquire location permission it won\'t perform correctly. Please confirm location request!</string>
+    <string name="error_no_location_permission">Request failed, you didn\'t approve location permission yet.</string>
+    <string name="error_location_request_failed">Location address request failed please try again later.</string>
+    <string name="button_confirm">Confirm</string>
+    <string name="button_positive">OK</string>
+    <string name="button_negative">Cancel</string>
+    <string name="address_in_coordinates_format">La: %f Lo: %f</string>
+
+    <!--map access token-->
+    <string name="mapbox_access_token">pk.eyJ1IjoiYWxpbWphbnFhZGlyIiwiYSI6ImNqb282cXR2MDE0N2gzcG14Y29iNG5sZW4ifQ.qorNY-k7s1jsFG7bZdOnPw</string>
+</resources>
