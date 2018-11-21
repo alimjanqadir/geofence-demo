@@ -6,8 +6,12 @@ A small demo project for recruitment.
 
 Project utilises the official [Jetpack](https://developer.android.com/jetpack)
 (former Architecture Components) components to implement recommended [clean app architecture](https://github.com/googlesamples/android-architecture) 
-which is robust, maintainable and easy to test. To achieve offline-supported database + network 
-model a repository created as single source of truth.
+which is robust, maintainable and easy to test. A ViewModel is created to encapsulate UI-related 
+data in a lifecycle aware way, to make app architecture more flexible and easy test data handling is
+not integrated into activity nor viewmodel, a repository created as a single data source and it can 
+be further implement multiple data sources local and remote. As a result activity and fragment only
+contained action related code and UI and data layer separated clearly. 
+
 
 ![app architecture](https://developer.android.com/topic/libraries/architecture/images/final-architecture.png)
 

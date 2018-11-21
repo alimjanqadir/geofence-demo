@@ -117,17 +117,6 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
      */
     @Override
     public void onMapReady(MapboxMap map) {
-        final Point point = new Point(1, 1);
-        point.setLatitude(2);
-        point.setLongitude(2);
-
-        Point point1 = point;
-        point1.setLongitude(3);
-        point1.setLongitude(3);
-
-        Timber.d(String.valueOf(point.getLatitude()));
-        Timber.d(String.valueOf(point1.getLatitude()));
-
         this.mMap = map;
 
         // Add listeners
@@ -286,6 +275,9 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
         this.mMap.getUiSettings().setRotateGesturesEnabled(false);
         this.mMap.getUiSettings().setCompassEnabled(true);
         this.mMap.getUiSettings().setCompassFadeFacingNorth(false);
+
+        // TODO used only for emulator testing can be customized later
+        //noinspection deprecation
         this.mMap.getUiSettings().setZoomControlsEnabled(true);
     }
 
