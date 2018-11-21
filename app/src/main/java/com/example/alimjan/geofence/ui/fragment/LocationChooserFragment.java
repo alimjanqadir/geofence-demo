@@ -17,7 +17,6 @@ import com.example.alimjan.geofence.model.Place;
 import com.example.alimjan.geofence.model.Point;
 import com.example.alimjan.geofence.ui.viewmodel.LocationChooserViewModel;
 import com.google.android.material.snackbar.Snackbar;
-import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -134,7 +133,7 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
         // Observe selected place information
         this.mViewModel.getSelectedPlace().observe(this, place -> {
             // Show a snackbar for geofence confirmation
-            showSnackBar(place);
+            showAddGeofenceSnackBar(place);
 
             // Position map to center
             this.mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(place.getPoint().getLatitude(), place.getPoint().getLongitude())));
@@ -202,23 +201,24 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
     private void addGeofenceMarkers(final List<Geofence> geofences) {
         List<MarkerOptions> markerList = new ArrayList<>();
         for (Geofence geofence : geofences) {
-            MarkerOptions markerOptions = new MarkerOptions().position(new LatLng(geofence.getLatitude(), geofence.getLongitude()));
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.setPosition(new LatLng(geofence.getLatitude(), geofence.getLongitude()));
             markerList.add(markerOptions);
         }
-
         this.mMap.addMarkers(markerList);
     }
 
     /**
-     * Shows a snackbar for geofence confirmation.
+     * Shows a snackbar for adding geofence.
      *
      * @param place Used for showing address and {@link Snackbar#setAction}.
      */
-    private void showSnackBar(final Place place) {
+    private void showAddGeofenceSnackBar(final Place place) {
         String message = place.getAddress();
-        Snackbar snackbar = Snackbar.make(mMapView, message, Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(this.mMapView, message, Snackbar.LENGTH_LONG);
         snackbar.setAction(R.string.button_confirm, view -> addGeofence(place)).show();
     }
+
 
     /**
      * Add a geofence for reminding user when they enter and exit specific area.
@@ -227,7 +227,7 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
      */
     @SuppressLint("MissingPermission")
     private void addGeofence(final Place place) {
-        if (PermissionsManager.areLocationPermissionsGranted(this.mContext)) { // Check permission first
+        if (isPermissionAcquired()) { // Check permission first
             // Create a geofence
             Geofence geofence = new Geofence();
             geofence.setAddress(place.getAddress());
@@ -243,13 +243,49 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
 
                 @Override
                 public void onError(@NonNull Throwable throwable) {
-
+                    Timber.e(throwable);
                 }
 
             });
         } else {
-            Toast.makeText(this.mContext, getString(R.string.error_no_location_permission), Toast.LENGTH_SHORT).show();
+            requestPermission();
         }
+    }
+
+    /**
+     * Removes a geofence alert.
+     *
+     * @param geofence A data class that represents a geofence.
+     */
+    private void removeGeofence(final Geofence geofence) {
+        mViewModel.getGeofenceAsync(geofence, new OnAsyncTaskCallback<Geofence>() {
+            @SuppressLint("MissingPermission")
+            @Override
+            public void onSuccess(@NonNull Geofence result) {
+                // Check for permission
+                if (isPermissionAcquired()) { // Check permission first
+                    mViewModel.removeGeofenceAsync(result); // remove geofence
+                } else {
+                    requestPermission();
+                }
+            }
+
+            @Override
+            public void onError(@NonNull Throwable throwable) {
+                Timber.e(throwable);
+            }
+        });
+    }
+
+    /**
+     * Shows a snackbar for removing geofence.
+     *
+     * @param geofence A data class that represents a geofence.
+     */
+    private void showRemoveGeofenceSnackBar(final Geofence geofence) {
+        Snackbar snackbar = Snackbar.make(this.mMapView, getString(R.string.message_remove_geofence), Snackbar.LENGTH_LONG);
+        snackbar.setAction(R.string.button_confirm, view -> removeGeofence(geofence)).show();
+
     }
 
     /**
@@ -319,32 +355,15 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
      */
     @Override
     public boolean onMarkerClick(@NonNull Marker marker) {
-        LatLng point = marker.getPosition();
+        // show remove snackbar
         Geofence geofence = new Geofence();
-        geofence.setLatitude(point.getLatitude());
-        geofence.setLongitude(point.getLongitude());
-
-        mViewModel.getGeofenceAsync(geofence, new OnAsyncTaskCallback<Geofence>() {
-            @SuppressLint("MissingPermission")
-            @Override
-            public void onSuccess(@NonNull Geofence result) {
-                // Check for permission
-                if (PermissionsManager.areLocationPermissionsGranted(LocationChooserFragment.this.mContext)) {
-                    mViewModel.removeGeofenceAsync(result); // remove geofence
-                } else {
-                    Toast.makeText(LocationChooserFragment.this.mContext, getString(R.string.error_no_location_permission), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onError(@NonNull Throwable throwable) {
-                Timber.e(throwable);
-            }
-
-        });
+        geofence.setLatitude(marker.getPosition().getLatitude());
+        geofence.setLongitude(marker.getPosition().getLongitude());
+        showRemoveGeofenceSnackBar(geofence);
 
         return false;
     }
+
 
     /**
      * Check location permission approved or not.

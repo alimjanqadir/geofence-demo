@@ -12,6 +12,7 @@
     <string name="error_location_request_failed">Location address request failed please try again later.</string>
     <string name="button_confirm">Confirm</string>
     <string name="button_positive">OK</string>
+    <string name="message_remove_geofence">Are you confirm this removal?</string>
     <string name="button_negative">Cancel</string>
     <string name="address_in_coordinates_format">La: %f Lo: %f</string>
 
