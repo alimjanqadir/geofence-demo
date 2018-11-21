@@ -9,11 +9,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        // For AMap SDK
-        ndk {
-            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
-        }
     }
+
     buildTypes {
         release {
             minifyEnabled true
@@ -39,7 +36,6 @@ dependencies {
     def room_version = "2.1.0-alpha02"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-rxjava2:$room_version"
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha1'
     testImplementation "androidx.room:room-testing:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
 
@@ -51,7 +47,7 @@ dependencies {
 
     // RxJava
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.12'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
 
     // Test
     testImplementation 'junit:junit:4.12'
@@ -68,14 +64,6 @@ dependencies {
     androidTestImplementation 'com.google.truth:truth:0.42'
     // Espresso dependencies
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.1.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.1.0'
-    androidTestImplementation 'androidx.test.espresso.idling:idling-concurrent:3.1.0'
-    // The following Espresso dependency can be either "implementation"
-    // or "androidTestImplementation", depending on whether you want the
-    // dependency to appear on your APK's compile classpath or the test APK
-    // classpath.
-    androidTestImplementation 'androidx.test.espresso:espresso-idling-resource:3.1.0'
     // UiAutomator
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
 }

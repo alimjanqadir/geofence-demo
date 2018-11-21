@@ -181,14 +181,12 @@ public interface GeofenceDao {
      */
     @SuppressWarnings("unused")
     @Query("DELETE FROM Geofence")
-    Integer deleteAll();
+    int deleteAll();
 
     /**
-     * Deletes all records from geofence table asynchronously.
-     *
-     * @return Deleted record count wrapped with {@link Single}.
+     * Deletes all records from geofence table asynchronously.*
      */
     @SuppressWarnings("unused")
     @Query("DELETE FROM Geofence")
-    Single<Integer> deleteAllAsync();
+    void deleteAllAsync();
 }
