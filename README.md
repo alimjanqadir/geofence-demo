@@ -4,6 +4,10 @@ A small demo project for recruitment.
 
 # Getting Started
 
+## Business scenario
+Requirement is to make geofence alert feature that notifies the user whenever he/she enters and exits
+a specified region and using Google Location API is not allowed.
+
 ## Architecture
 
 Project utilises the official [Jetpack](https://developer.android.com/jetpack)
@@ -25,19 +29,29 @@ Project consists of 5 main packages :
 * model (include a model classes that key part of the application)
 * ui (includes all ui related classes activities, fragments, other UI-related stuff.)
 
+[MainActivity](https://github.com/alimjanqadir/geofence-demo/blob/master/app/src/main/java/com/example/alimjan/geofence/ui/activity/MainActivity.java) 
+is the starting point of the app, that includes [LocationChooserFragment](https://github.com/alimjanqadir/geofence-demo/blob/master/app/src/main/java/com/example/alimjan/geofence/ui/fragment/LocationChooserFragment.java) 
+which is main UI component, LocationChooserFragment is literally a map that shows user created geofences, state of the
+geofences indicated by different colors. There are two main user action in the fragment 
+`LocationChooserFragment#addGeofence` and `LocationChooserFragment#RemoveGeofence`, actions invokes from 
+fragment handled by repository through viewmodel, every time user invokes an action associated geofence 
+created or removed by LocationManger#addProximityAlert API and also saved to database for persistence.  
 
-## Business scenario
-Requirement is to make geofence alert feature that notifies the user whenever he/she enters and exits
-a specified region and using Google Location API is not allowed.
 
-## Design choices
+## Design choices & Implementation
 At first my design scheme is to maintain a list of areas with minimum radius of 200 meters
-and check them with 5 minutes latency using WorkManager. Implementing, testing and running correctly 
-is seemed hard to accomplish in two days. After reading the LocationManager document I 
-realize it has offered addProximityAlert method to create geofence alert, So I achieve this scenario 
+and check them with 5 minutes latency using WorkManager. But implementing, testing and running correctly 
+seemed hard to accomplish in two days. After reading the LocationManager document I realize it has
+offered addProximityAlert method to create geofence alert, so I achieve this scenario 
 using LocationManger#addProximityAlert api. Latency of the api is 5s to 10m and system uses it's
 location service to optimize battery life and I checked the running services of the os in Xiaomi 10
 it uses in-house FusionLocationProvider(which utilizes all kind of location providers) to fix location.
+
+For showing the geofence on the map I use [AutoNavi](https://en.wikipedia.org/wiki/AutoNavi) at first,
+they are map provider of the Apple in China and very popular here(also acquired by Alibaba).
+They also have FusionLocationProvider for optimization and provide location SDK that supports geofence.
+But after implementation I realize they don't have map data for many European countries, 
+so I have no choice to use Mapbox Map and it took my day to familiar with it(especially drawing a circle):).
 
 
 ### Build
