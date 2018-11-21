@@ -24,9 +24,10 @@ contained action related code and UI and data layer separated clearly.
 
 Project consists of 5 main packages :
 
-* data (include repository class which represents data layer)
-* db (include Room database class, dao and a helper class)
-* model (include a model classes that key part of the application)
+* data (include repository class which represents data layer.)
+* db (include Room database class, dao and a helper class.)
+* model (include a model classes that key part of the application.)
+* service (include a service classes that handles geofence trigger.)
 * ui (includes all ui related classes activities, fragments, other UI-related stuff.)
 
 [MainActivity](https://github.com/alimjanqadir/geofence-demo/blob/master/app/src/main/java/com/example/alimjan/geofence/ui/activity/MainActivity.java) 
@@ -53,6 +54,14 @@ They also have FusionLocationProvider for optimization and provide location SDK 
 But after implementation I realize they don't have map data for many European countries, 
 so I have no choice to use Mapbox Map and it took my day to familiar with it(especially drawing a circle):).
 
+
+## Test
+App is tested on 5 virtual device with API levels from 22 to 28, latency is in seconds if the app is
+in the foreground and 5min to 10min while in the background. This result is almost same when I test
+with physical device (XiaoMi Android Version 8.0).
+
+![test-image-01](/images/test-image-01.png)
+![test-image-02](/images/test-image-02.png)
 
 ### Build
 

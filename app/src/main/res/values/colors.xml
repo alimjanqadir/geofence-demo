@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="primaryColor">#ff3d49</color>
+    <color name="primaryLightColor">#ff7675</color>
+    <color name="primaryDarkColor">#c40021</color>
+    <color name="secondaryColor">#ffffff</color>
+    <color name="secondaryLightColor">#ffffff</color>
+    <color name="secondaryDarkColor">#cccccc</color>
+    <color name="primaryTextColor">#ffffff</color>
+    <color name="secondaryTextColor">#000000</color>
 
-    <color name="color_fence">#83008577</color>
+    <color name="geofence_circle_color_default">#aaff3d49</color>
+    <color name="geofence_circle_color_default_stroke">#ff3d49</color>
+    <color name="geofence_circle_color_user_click_point">#aa1e88e5</color>
+    <color name="geofence_circle_color_user_click_point_stroke">#1e88e5</color>
+    <color name="geofence_circle_color_triggered">#aa7cb342</color>
+    <color name="geofence_circle_color_triggered_stroke">#7cb342</color>
 </resources>

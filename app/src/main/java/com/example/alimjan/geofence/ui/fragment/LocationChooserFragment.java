@@ -224,8 +224,14 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
         for (Geofence geofence : geofences) {
             PolygonOptions polygonOptions = new PolygonOptions();
             polygonOptions.addAll(polygonCircleForPoint(new LatLng(geofence.getLatitude(), geofence.getLongitude()), 200));
-            polygonOptions.fillColor(getResources().getColor(R.color.color_fence));
-            polygonOptions.strokeColor(getResources().getColor(R.color.colorPrimaryDark));
+            int geofenceCircleColor = getResources().getColor(R.color.geofence_circle_color_default);
+            int geofenceCircleStokeColor = getResources().getColor(R.color.geofence_circle_color_default_stroke);
+            if (geofence.isTriggered()) {
+                geofenceCircleColor = getResources().getColor(R.color.geofence_circle_color_triggered);
+                geofenceCircleStokeColor = getResources().getColor(R.color.geofence_circle_color_triggered_stroke);
+            }
+            polygonOptions.fillColor(geofenceCircleColor);
+            polygonOptions.strokeColor(geofenceCircleStokeColor);
             polygonOptionsList.add(polygonOptions);
         }
         this.mMap.addPolygons(polygonOptionsList);
@@ -375,8 +381,8 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
         } else {
             PolygonOptions polygonOptions = new PolygonOptions();
             polygonOptions.addAll(polygonCircleForPoint(point, 200));
-            polygonOptions.fillColor(getResources().getColor(R.color.colorPrimary));
-            polygonOptions.strokeColor(getResources().getColor(R.color.colorPrimaryDark));
+            polygonOptions.fillColor(getResources().getColor(R.color.geofence_circle_color_user_click_point));
+            polygonOptions.strokeColor(getResources().getColor(R.color.geofence_circle_color_user_click_point_stroke));
             this.mUserClickPointRadius = this.mMap.addPolygon(polygonOptions);
         }
     }
