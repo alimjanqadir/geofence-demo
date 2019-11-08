@@ -66,7 +66,7 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
      *
      * @return A new instance of fragment LocationChooserFragment.
      */
-    @SuppressWarnings({"WeakerAccess", "unused"})
+    @SuppressWarnings({"unused"})
     public static LocationChooserFragment newInstance() {
         return new LocationChooserFragment();
     }
@@ -354,10 +354,6 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
         this.mMap.getUiSettings().setRotateGesturesEnabled(false);
         this.mMap.getUiSettings().setCompassEnabled(true);
         this.mMap.getUiSettings().setCompassFadeFacingNorth(false);
-
-        // TODO used only for emulator testing customized later
-        //noinspection deprecation
-        this.mMap.getUiSettings().setZoomControlsEnabled(true);
     }
 
 
@@ -365,6 +361,7 @@ public class LocationChooserFragment extends Fragment implements OnMapReadyCallb
      * Called when the user clicks on the map view.
      *
      * @param point The projected map coordinate the user clicked on.
+     * @return
      */
     @Override
     public void onMapClick(@NonNull LatLng point) {

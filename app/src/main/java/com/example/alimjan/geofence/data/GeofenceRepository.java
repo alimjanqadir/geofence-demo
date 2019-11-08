@@ -6,6 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresPermission;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.example.alimjan.geofence.R;
 import com.example.alimjan.geofence.db.GeofenceDao;
 import com.example.alimjan.geofence.model.Geofence;
@@ -20,11 +26,6 @@ import com.mapbox.core.exceptions.ServicesException;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresPermission;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
